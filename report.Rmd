@@ -1,30 +1,230 @@
 ---
-title: "Inclusion"
+title: Estudio descriptivo sobre la inclusión en los cómics de Marvel y DC en base a las características del género y la orientación sexual de sus personajes
 author: "Ander Carrasco y Angel Lozada"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: 
+  pdf_document: 
+    fig_crop: no
+    fig_height: 5
 ---
 
-```{r pressure, include=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(tidyverse)
+
 ```
 
-## R Markdown
+## Introducción
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+El presente informe tiene la finalidad de establecer algunas relaciones entre las características de los personajes de Marvel comics y DC comics a razón de determinar si existe una línea poco inclusiva entre los desarrolladores de ambas compañías. Dicho estudio se realizará a través de técnicas descriptivas como cuadros de distribución de frecuencias, histogramas y gráficos que permitirán obtener información, clara e intuitiva, de la problemática que se plantea.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+***
 
-```{r cars, echo=FALSE}
-summary(cars)
+## Análisis Descriptivo
+
+La siguiente tabla es una distribución de frecuencias del número de apariciones entre los personajes catalogados como minorías sexuales y personajes hetero sexuales en los comics de Marvel y DC.
+
+```{r , echo=FALSE}
+
+table_1 <-read.csv(file = 'table_1.csv')
+table_1_f <- table_1 %>%summarise(Orientacion,fi,hi,porcentajes)
+
+kable(table_1_f,digits=2,caption="Número de apariciones entre personajes personajes catalogados como minorías sexuales y personajes heterosexuales", col.names = c("Orientación sexual","fi","hi","%"),align = 'c')
 ```
 
-## Including Plots
+La siguiente gráfica muestra que los personajes heterosexuales tienen un mayor número de apariciones abarcando el 97% de las mismas; mientras que los personajes que se encuentran entre las minorías sexuales sólo representan un 3% de las apariciones en las historietas de Marvel y DC.
+```{r , echo=FALSE}
+graphic_data_1 <-read.csv(file = 'graphic_data_1.csv')
+ggplot(graphic_data_1,mapping = aes(x="",y=Frecuecia, fill=Grupo))+
+  geom_bar(stat = "identity")+
+  coord_polar(theta="y")+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("") +
+    geom_text(aes(label=Porcentajes),
+              position=position_stack(vjust=0.5))+
+    theme_void()+
+    labs(
+    	title="Grafico circular I",
+       subtitle = "Frecuencia de las apariciones de personajes heterosexuales y no heterosexuales")+
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))+
+    guides(fill=guide_legend(title="Orientación sexual"))
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+***
+
+## Inclusión de personajes no heterosexuales a través de las décadas
+
+A continuación se muestra una tabla con la distribución de frecuencias de las primeras apariciones de los personajes catalogados como minorías sexuales y su comportamiento a través de las décadas a partir de 1940.
+```{r , echo=FALSE}
+  graphic_data_2 <-read.csv(file = 'graphic_data_2.csv')
+  table_2_f <- graphic_data_2 %>%summarise(decades,decadesResults,gsmDecades_hi,gsmDecadesPerc)
+  
+  kable(table_2_f,digit=2,caption="Primeras apariciones de los personajes catalogados como minorías sexuales
+", col.names = c("Primera aparición","fi","hi","%"),align = 'c')
+  
+```
+
+```{r , echo=FALSE}
+
+
+ggplot(data=graphic_data_2,mapping=aes(x=decades,y=decadesResults, group=1,color=decadesResults))+
+	
+	geom_point()+
+	geom_line()+
+	theme_classic()+
+	scale_x_continuous(name="Decadas",breaks=graphic_data_2$decades) +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("Frecuencia") +
+    labs(title="Grafico de linea I",subtitle = "Frecuencia absoluta de la creacion de personajes gsm a lo largo del sigo XX y XXI")+
+    theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))+
+    guides(color=guide_legend(title="Frecuencia"))
+```
+En la gráfica se puede apreciar que entre 1940 y 1950 hay una disminución en la creación de estos personajes. Pero a partir de 1950 existe un crecimiento bastante considerable en las primeras apariciones de las minorías sexuales como personajes de los cómics de Marvel y DC.
+
+***
+## Análisis de los personajes no heterosexuales
+
+```{r , echo=FALSE}
+  graphic_data_3 <-read.csv(file = 'graphic_data_3.csv')
+  table_3_f <- graphic_data_3 %>%summarise(heroesGroups,gsmHeroesAmounts,gsmHeroes_hi,gsmHeroesPercentages)
+  
+  kable(table_2_f,digit=2,caption="Primeras apariciones de los personajes catalogados como minorías sexuales
+", col.names = c("orientación sexual","fi","hi","%"),align = 'c')
+  
+ggplot(graphic_data_3,mapping = aes(x="",gsmHeroesAmounts, fill=heroesGroups))+
+  geom_bar(stat = "identity")+
+  coord_polar(theta="y")+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("") +
+    geom_text(aes(label=gsmHeroesPercentages),
+              position=position_stack(vjust=0.5))+
+    theme_void()+
+    scale_fill_manual(values=c("lightblue","salmon"))+
+    labs(
+    	title="Grafico circular II",
+       subtitle = "Cantidad de heroes heterosexuales y no heterosexuales")+
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))+
+    guides(fill=guide_legend(title="Orientación sexual"))
+```
+
+La gráfica arroja que sólo el 1,3% de los personajes “buenos” pertenecen al grupo de minorías sexuales mientras que el 98,7% corresponde a personajes heterosexuales.
+
+```{r , echo=FALSE}
+  table_4 <-read.csv(file = 'table_4.csv')
+
+  table_4_f <- table_4%>%summarise(gsmType
+	,transInfo,homoInfo,panSexInfo,fluidInfo,biSexInfo)
+   kable(table_4_f,digit=2,caption=" Tendencia de apariciones entre las minorías sexuales", col.names = c(),align = 'c')
+   
+```
+
+El presente cuadro contiene las estadísticas descriptivas del conjunto de orientaciones sexuales que conforman las minorías sexuales en los personajes de Marvel y DC. El mismo contiene las medidas que determinan la dispersión y la tendencia central entre los datos de esa variable.
+
+```{r , echo=FALSE}
+  graphic_data_4  <-read.csv(file = 'graphic_data_4.csv')
+
+ggplot(data = graphic_data_4, mapping = aes(x = gsm, y = appearances,fill=gsm)) + 
+  geom_boxplot()+
+	coord_flip()+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("") +
+    labs(
+    	title="Grafico de caja I",
+       subtitle = "Tendencia de apariciones de personajes no heterosexuales")+
+    theme(plot.margin = margin(0.2, 0.2, 0.2, 0.2, "cm"))+
+    guides(fill=guide_legend(title="Orientación sexual"))
+   
+```
+La gráfica muestra que los personajes bisexuales tienen un número de apariciones promedio de 186, sin embargo, algunos personajes tienen muchas más apariciones que aquellos que se encuentran en los valores mínimos. Los personajes homosexuales en promedio tienen un número de apariciones de 43, teniendo valores intercuartílicos que van desde las 6,5 apariciones hasta las 48,5 apariciones. Y los personajes transgenero tienen un número de apariciones promedio de 34,5 con un rango bastante corto en comparación con las otras variables. 
+
+***
+
+```{r , echo=FALSE}
+  graphic_data_5  <-read.csv(file = 'graphic_data_5.csv')
+
+ggplot(graphic_data_5,mapping = aes(x="",y=gsmVillianAmounts, fill=villianGroups))+
+  geom_bar(stat = "identity")+
+  coord_polar(theta="y")+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("") +
+    geom_text(aes(label=gsmVilliansPercentages),
+              position=position_stack(vjust=0.5))+
+    theme_void()+
+    scale_fill_manual(values=c("yellow","darkblue"))+
+    labs(
+    	title="Grafico circular III",
+       subtitle = "Cantidad de villanos heterosexuales y no heterosexuales")+
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))+
+    guides(fill=guide_legend(title="Orientación sexual"))
+   
+```
+
+En la siguiente gráfica se puede observar que el 99,8% de los villanos en los comics de Marvel y DC son creados como personajes heterosexuales mientras que un 0.2% es la representación que tienen las minorías sexuales en los villanos de los comics.
+
+***
+## Inclusión de personajes mujeres en los cómics
+
+```{r , echo=FALSE}
+  graphic_data_6  <-read.csv(file = 'graphic_data_6.csv')
+
+ggplot(data = graphic_data_6) +
+  geom_bar(mapping = aes(x = Grupo, y = freq, fill = Sexo), stat = "identity",position="dodge")+
+  scale_y_continuous(breaks=0:32/2*1000,name="")+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+
+    labs(
+    	title="Grafico de barras I",
+       subtitle = "Cantidad de heroes heterosexuales y no heterosexuales")+
+    theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))+
+    guides(fill=guide_legend(title="Sexo"))
+   
+```
+
+Este gráfico nos enseña, en principio, que el numero de apariciones de los hombres sobrepasa tres veces a numero de apariciones del sexo femenino. Igualmente se puede observar que el número de héroes es mayor que el número de heroínas. finalizando con una distinción aún más pronunciada entre cantidad de villanos y villanas, siendo el número de hombres mayor que el número de mujeres. 
+
+***
+
+```{r , echo=FALSE}
+  graphic_data_7  <-read.csv(file = 'graphic_data_7.csv')
+decadesVec <- graphic_data_7$decades
+decadesWomenResultsVec <- graphic_data_7$decadesWomenResults
+
+ggplot(mapping=aes(decadesVec,decadesWomenResultsVec, group=1,color=decadesWomenResultsVec))+
+	
+	geom_point()+
+	geom_line()+
+	theme_classic()+
+	scale_x_continuous(name="Decadas",breaks=decadesVec) +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("Frecuencia") +
+    labs(title="Grafico de lineas II",subtitle = "Frecuencia absoluta de la creacion de personajes mujeres a lo largo del sigo XX y XXI")+
+    theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))+
+    guides(color=guide_legend(title="Frecuencia"))
+```
+
+El gráfico muestra una disminución de nuevos personajes femeninos en los comics de Marvel y DC entre 1940 y 1950. Entre 1950 y 19990 hay un crecimiento exponencial en la creación de nuevos personajes femeninos pasando de 68 a 2239. Y entre 1990 y los años 2000 volvio a caer la producción de estos personajes pasando de 2239 a 1593.
+
+***
+
+## Conclusiones
+
+* Hay una considerable predominancia de personajes heterosexuales en los cómics de Marvel y DC.
+
+* A medida  que pasaban las décadas fueron incluyendo más personajes catalogados como minorías sexuales en comics.
+
+*  Existen solo 97 héroes en los comics que pertenecen a una minoria sexual mientras que hay 7371 heroes heterosexuales, lo que se puede traducir en que por cada 76 heroes hetero sexuales existe 1 unico heroe de las minorias sexuales.
+
+* Existen más personajes homosexuales que de otra orientación sexual perteneciente a las minorías sexuales; aunque los personajes bisexuales acumulan un mayor número de apariciones.
+
+* Hay una abismal diferencia entre la cantidad de villanos heterosexuales y aquellos que pertenecen a una minoria sexual, encontrándonos, con que, por cada personaje no heterosexual existen 399,62 personajes heterosexuales.
+
+* Hay más apariciones de hombres en los cómics  que de mujeres; pudiéndose apreciar que por cada aparición de un personaje femenino hay 3 apariciones de un personaje masculino.
+
+* Se evidencia que con el paso de las décadas hubo un intento por crear más personajes femeninos dentro de los cómics, sin embargo durante los años noventa y los años 2000 empieza a disminuir esa tendencia.
+
+

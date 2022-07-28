@@ -12,6 +12,9 @@ comicsData <- read.csv(file = 'Comics G5.csv')
 #Personajes que pertenecen a las minorias sexuales
 gsm     <- filter(comicsData, !is.na(gsm) )
 
+
+
+
 #df_status(gsm)
 #freq(gsm)
 
@@ -34,6 +37,8 @@ print(
 )
 
 
+
+
 #Numero total de apariciones de los heroes que NO pertenecen a una minoria sexual
 
 noGsmApperances  <- sum(
@@ -47,7 +52,6 @@ print(
 		" apariciones"
 	)
 )
-
 #Proporcion de apariciones 
 appearancesProportion <- noGsmApperances/gsmApperances
 
@@ -58,6 +62,32 @@ print(
 		" apariciones de personajes heterosexuales"
 	)
 )
+#Porcentajes
+
+porcentajes <- c(
+  paste(round(gsmApperances*100/(gsmApperances+noGsmApperances),1),"%"),
+  paste(round(noGsmApperances*100/(gsmApperances+noGsmApperances),1),"%")
+)
+
+#tabla
+
+gsmApperancesFi   <- round(gsmApperances/(gsmApperances+noGsmApperances),2)
+noGsmApperancesHi <-round(noGsmApperances/(gsmApperances+noGsmApperances),2)
+
+Orientacion = c("Minorias sexuales","Heterosexuales")
+fi = c(gsmApperances,noGsmApperances)
+hi = c(gsmApperancesFi,noGsmApperancesHi)
+
+
+tableApperances <- data.frame(
+  Orientacion,
+  fi,
+  hi,
+  porcentajes
+)
+
+
+write.csv(tableApperances, file = "table_1.csv")
 
 #Personajes con mas apariciones
 
@@ -75,8 +105,8 @@ print(paste(
 #Grafico de barras I proporcion de personajes gsm 
 Frecuecia <- c(gsmApperances , noGsmApperances)
 Porcentajes <- c(
-	paste(round(gsmApperances*100/(gsmApperances+noGsmApperances),1),"%"),
-	paste(round(noGsmApperances*100/(gsmApperances+noGsmApperances),1),"%")
+  paste(round(gsmApperances*100/(gsmApperances+noGsmApperances),1),"%"),
+  paste(round(noGsmApperances*100/(gsmApperances+noGsmApperances),1),"%")
 )
 
 Grupo <- c("No heterosexuales","Heterosexuales")
@@ -84,7 +114,9 @@ Grupo <- c("No heterosexuales","Heterosexuales")
 
 
 
-gsmProportionDf <- data.frame(Grupo,Frecuecia)
+gsmProportionDf <- data.frame(Grupo,Frecuecia,Porcentajes)
+
+write.csv(gsmProportionDf, file = "graphic_data_1.csv")
 
 ggplot(gsmProportionDf,mapping = aes(x="",y=Frecuecia, fill=Grupo))+
   geom_bar(stat = "identity")+
@@ -292,8 +324,28 @@ decades<-c(
 	"1990",
 	"2000"
 )
+gsmDecadesPerc<-c(
+  paste(round(length(gsmInFortiesDecade$name)*100/length(gsm$name),2),"%"),
+  paste(round(length(gsmInFitiesDecade$name)*100/length(gsm$name),2),"%"),
+  paste(round(length(gsmInSixtiesDecade$name)*100/length(gsm$name),2),"%"),
+  paste(round(length(gsmInSeventiesDecade$name)*100/length(gsm$name),2),"%"),
+  paste(round(length(gsmInEightiesDecade$name)*100/length(gsm$name),2),"%"),
+  paste(round(length(gsmInNinetiesDecade$name)*100/length(gsm$name),2),"%"),
+  paste(round(length(gsmIn2milDecade$name)*100/length(gsm$name),2),"%")
+)
+gsmDecades_hi<-c(
+  length(gsmInFortiesDecade$name)/length(gsm$name),
+  length(gsmInFitiesDecade$name)/length(gsm$name),
+  length(gsmInSixtiesDecade$name)/length(gsm$name),
+  length(gsmInSeventiesDecade$name)/length(gsm$name),
+  length(gsmInEightiesDecade$name)/length(gsm$name),
+  length(gsmInNinetiesDecade$name)/length(gsm$name),
+  length(gsmIn2milDecade$name)/length(gsm$name)
+  )
+print(gsmDecadesPerc)
 
-gsmDecadesDf <- data.frame(decades,decadesResults)
+gsmDecadesDf <- data.frame(decades,decadesResults,gsmDecades_hi,gsmDecadesPerc)
+write.csv(gsmDecadesDf, "graphic_data_2.csv")
 
 ggplot(mapping=aes(decades,decadesResults, group=1,color=decadesResults))+
 	
@@ -375,7 +427,10 @@ gsmVilliansPercentages <- c(
 	paste(round(length(noGsmVillians$name)*100/(length(gsmVillians$name)+length(noGsmVillians$name)),1),"%")
 )
 
-gsmVilliansDf <- data.frame(villianGroups,gsmVillianAmounts)
+gsmVilliansDf <- data.frame(villianGroups,gsmVillianAmounts,gsmVilliansPercentages)
+
+write.csv(gsmVilliansDf, file = "graphic_data_5.csv")
+
 
 ggplot(gsmVilliansDf,mapping = aes(x="",y=gsmVillianAmounts, fill=villianGroups))+
   geom_bar(stat = "identity")+
@@ -388,7 +443,7 @@ ggplot(gsmVilliansDf,mapping = aes(x="",y=gsmVillianAmounts, fill=villianGroups)
     theme_void()+
     scale_fill_manual(values=c("yellow","darkblue"))+
     labs(
-    	title="Grafico circular III",
+    	title="Grafico circular IV",
        subtitle = "Cantidad de villanos heterosexuales y no heterosexuales")+
     theme(plot.margin = margin(1, 1, 1, 1, "cm"))+
     guides(fill=guide_legend(title="Orientación sexual"))
@@ -421,12 +476,21 @@ gsmHeroesAmounts <- c(
 
 heroesGroups     <- c("Heroes no heterosexuales","Heroes heterosexuales")
 
+
 gsmHeroesPercentages <- c(
 	paste(round(length(gsmHeroes$name)*100/(length(gsmHeroes$name)+length(noGsmHeroes$name)),1),"%"),
 	paste(round(length(noGsmHeroes$name)*100/(length(gsmHeroes$name)+length(noGsmHeroes$name)),1),"%")
 )
 
-gsmHeroesDf <- data.frame(heroesGroups,gsmHeroesAmounts)
+
+gsmHeroes_hi<-c(
+  round(length(gsmHeroes$name)/(length(gsmHeroes$name)+length(noGsmHeroes$name)),1),
+	round(length(noGsmHeroes$name)/(length(gsmHeroes$name)+length(noGsmHeroes$name)),1)
+)
+
+
+gsmHeroesDf <- data.frame(heroesGroups,gsmHeroesAmounts,gsmHeroes_hi,gsmHeroesPercentages)
+write.csv(gsmHeroesDf, "graphic_data_3.csv")
 
 ggplot(gsmHeroesDf,mapping = aes(x="",y=gsmHeroesAmounts, fill=heroesGroups))+
   geom_bar(stat = "identity")+
@@ -439,7 +503,7 @@ ggplot(gsmHeroesDf,mapping = aes(x="",y=gsmHeroesAmounts, fill=heroesGroups))+
     theme_void()+
     scale_fill_manual(values=c("lightblue","salmon"))+
     labs(
-    	title="Grafico circular IV",
+    	title="Grafico circular II",
        subtitle = "Cantidad de heroes heterosexuales y no heterosexuales")+
     theme(plot.margin = margin(1, 1, 1, 1, "cm"))+
     guides(fill=guide_legend(title="Orientación sexual"))
@@ -481,6 +545,9 @@ demo <- tribble(
 
 )
 
+write.csv(demo, "graphic_data_6.csv")
+
+
 ggplot(data = demo) +
   geom_bar(mapping = aes(x = Grupo, y = freq, fill = Sexo), stat = "identity",position="dodge")+
   scale_y_continuous(breaks=0:32/2*1000,name="")+
@@ -496,6 +563,8 @@ ggplot(data = demo) +
 
 #Grafico de caja y bigotes
 gsmAndNoGsmApperancesDf <- filter(gsm, !is.na(appearances) )
+
+write.csv(gsmAndNoGsmApperancesDf,file="graphic_data_4.csv")
 
 ggplot(data = gsmAndNoGsmApperancesDf, mapping = aes(x = gsm, y = appearances,fill=gsm)) + 
   geom_boxplot()+
@@ -519,11 +588,21 @@ bisexualsAppearencesMax = max(bisexualsAppearences$appearances)
 bisexualsAppearencesMin = min(bisexualsAppearences$appearances)
 
 
-profiling_num(bisexualsAppearences)
-
-
 print(bisexualsAppearencesMax)
 print(bisexualsAppearencesMin)
+
+biSex <- profiling_num(bisexualsAppearences)
+biSexInfo<- c(
+	"Bisexual",
+	mean(bisexualsAppearences$appearances),
+	bisexualsAppearencesMin,
+	bisexualsAppearencesMax,
+	biSex$p_25,
+	biSex$p_50,
+	biSex$p_75,
+	round(biSex$std_dev,2)
+)
+
 
 #Homo
 homosexualAppearences = filter(gsm, !is.na(appearances) & gsm=="Homosexual Characters")
@@ -532,10 +611,21 @@ homosexualAppearencesMax = max(homosexualAppearences$appearances)
 homosexualAppearencesMin = min(homosexualAppearences$appearances)
 
 
-profiling_num(homosexualAppearences)
 
 print(homosexualAppearencesMax)
 print(homosexualAppearencesMin)
+
+homoSex <- profiling_num(homosexualAppearences)
+homoInfo<- c(
+	"género fluido",
+	mean(homosexualAppearences$appearances),
+	homosexualAppearencesMin,
+	homosexualAppearencesMax,
+	homoSex$p_25,
+	homoSex$p_50,
+	homoSex$p_75,
+	round(homoSex$std_dev,2)
+)
 
 #Fluid
 fluidAppearences = filter(gsm, !is.na(appearances) & gsm=="Genderfluid Characters")
@@ -550,6 +640,18 @@ profiling_num(fluidAppearences)
 print(fluidAppearencesMax)
 print(fluidAppearencesMin)
 
+fluidSex <- profiling_num(fluidAppearences)
+fluidInfo<- c(
+	"género fluido",
+	mean(fluidAppearences$appearances),
+	fluidAppearencesMin,
+	fluidAppearencesMax,
+	fluidSex$p_25,
+	fluidSex$p_50,
+	fluidSex$p_75,
+	round(fluidSex$std_dev,2)
+)
+
 #Pan
 PansexualAppearences = filter(gsm, !is.na(appearances) & gsm=="Pansexual Characters")
 
@@ -558,23 +660,59 @@ PansexualAppearencesMin = min(PansexualAppearences$appearances)
 
 print(PansexualAppearences$gsm)
 
-profiling_num(PansexualAppearences)
+
 
 print(PansexualAppearencesMax)
 print(PansexualAppearencesMin)
 
-#Pan
+panSex <- profiling_num(PansexualAppearences)
+panSexInfo<- c(
+	"Pansexual",
+	mean(PansexualAppearences$appearances),
+	PansexualAppearencesMin,
+	PansexualAppearencesMax,
+	panSex$p_25,
+	panSex$p_50,
+	panSex$p_75,
+	round(panSex$std_dev,2)
+)
+print(panSexInfo)
+
+#Trans
 TransgenderAppearences = filter(gsm, !is.na(appearances) & gsm=="Transgender Characters")
 
 print(TransgenderAppearences$name)
 
-profiling_num(TransgenderAppearences)
+
 
 TransgenderAppearencesMax = max(TransgenderAppearences$appearances)
 TransgenderAppearencesMin = min(TransgenderAppearences$appearances)
 
 print(TransgenderAppearencesMax)
 print(TransgenderAppearencesMin)
+
+trans <- profiling_num(TransgenderAppearences)
+transInfo<- c(
+	"Transgenero",
+	mean(TransgenderAppearences$appearances),
+	TransgenderAppearencesMin,
+	TransgenderAppearencesMax,
+	trans$p_25,
+	trans$p_50,
+	trans$p_75,
+	round(trans$std_dev,2)
+)
+print(transInfo)
+
+gsmType <- c("minoría sexual","Media","min","max","Q1","Q2","Q3","DS")
+
+table_4 <- data.frame(
+	gsmType
+	,transInfo,homoInfo,panSexInfo,fluidInfo,biSexInfo)
+
+write.csv(table_4, file = "table_4.csv")
+
+print(table_4)
 
 #Personajes women en los 40
 
@@ -681,7 +819,10 @@ decadesWomenResults <- c(
 
 womenDecadesDf <- data.frame(decades,decadesWomenResults)
 
-ggplot(mapping=aes(decades,decadesWomenResults, group=1,color=decadesWomenResults))+
+write.csv(womenDecadesDf, file = "graphic_data_7.csv")
+
+
+ggplot(data=womenDecadesDf,mapping=aes(decades,decadesWomenResults, group=1,color=decadesWomenResults))+
 	
 	geom_point()+
 	geom_line()+
@@ -691,3 +832,5 @@ ggplot(mapping=aes(decades,decadesWomenResults, group=1,color=decadesWomenResult
     labs(title="Grafico de lineas II",subtitle = "Frecuencia absoluta de la creacion de personajes mujeres a lo largo del sigo XX y XXI")+
     theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))+
     guides(color=guide_legend(title="Frecuencia"))
+
+print(length(filter(menChars, !is.na(appearances))$name))
