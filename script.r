@@ -1,4 +1,4 @@
-#library(funModeling)
+library(funModeling)
 library(dplyr)
 library(ggplot2)
 
@@ -79,17 +79,8 @@ Porcentajes <- c(
 	paste(round(noGsmApperances*100/(gsmApperances+noGsmApperances),1),"%")
 )
 
-Grupo <- c("GSM","Heterosexuales")
+Grupo <- c("No heterosexuales","Heterosexuales")
 #prop <-c(1,1)
-
-#demo <- tribble(
-#  ~Grupo,         ~freq,
-#  "GSM",       gsmApperances,
-#  "Heterosexual",       noGsmApperances
-#)
-
-#ggplot(data = demo) +
-#  geom_bar(mapping = aes(x = Grupo, y = freq, fill = Grupo), stat = "identity")
 
 
 
@@ -106,9 +97,9 @@ ggplot(gsmProportionDf,mapping = aes(x="",y=Frecuecia, fill=Grupo))+
     theme_void()+
     labs(
     	title="Grafico circular I",
-       subtitle = "Frecuencia de las apariciones 
-       de personajes heterosexuales y no heterosexuales")+
-    theme(plot.margin = margin(1, 1, 1, 1, "cm"))
+       subtitle = "Frecuencia de las apariciones de personajes heterosexuales y no heterosexuales")+
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))+
+    guides(fill=guide_legend(title="Orientación sexual"))
 
 #Personajes gsm a lo largo de las decadas
 
@@ -311,11 +302,10 @@ ggplot(mapping=aes(decades,decadesResults, group=1,color=decadesResults))+
 	theme_classic()+
 	scale_x_discrete("Decadas") +     # configuración eje X (etiqueta del eje)
     scale_y_continuous("Frecuencia") +
-    labs(
-    	title="Grafico de linea I",
-       subtitle = "Frecuencia 
-       absoluta de la creacion de 
-       personajes gsm a lo largo del sigo XX y XXI")
+    labs(title="Grafico de linea I",subtitle = "Frecuencia absoluta de la creacion de personajes gsm a lo largo del sigo XX y XXI")+
+    theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))+
+    guides(color=guide_legend(title="Frecuencia"))
+
 
 #Personajes GSM hombre/mujeres
 
@@ -349,8 +339,8 @@ ggplot(gsmSexDf,mapping = aes(x="",y=gsmAmounts, fill=groups))+
     labs(
     	title="Grafico circular II",
        subtitle = "Cantidad de personajes no heterosexuales hombres y mujeres")+
-    theme(plot.margin = margin(1, 1, 1, 1, "cm"))
-
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))+
+    guides(fill=guide_legend(title="Sexo"))
 
 #Personajes hetero y no hetero villanos
 
@@ -378,7 +368,7 @@ gsmVillianAmounts <- c(
 	length(noGsmVillians$name)
 )
 
-villianGroups     <- c("Villanos GSM","Villanos heterosexuales")
+villianGroups     <- c("No heterosexuales","Heterosexuales")
 
 gsmVilliansPercentages <- c(
 	paste(round(length(gsmVillians$name)*100/(length(gsmVillians$name)+length(noGsmVillians$name)),1),"%"),
@@ -396,11 +386,12 @@ ggplot(gsmVilliansDf,mapping = aes(x="",y=gsmVillianAmounts, fill=villianGroups)
     geom_text(aes(label=gsmVilliansPercentages),
               position=position_stack(vjust=0.5))+
     theme_void()+
-    scale_fill_manual(values=c("darkblue","yellow"))+
+    scale_fill_manual(values=c("yellow","darkblue"))+
     labs(
     	title="Grafico circular III",
        subtitle = "Cantidad de villanos heterosexuales y no heterosexuales")+
-    theme(plot.margin = margin(1, 1, 1, 1, "cm"))
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))+
+    guides(fill=guide_legend(title="Orientación sexual"))
 
 #Personajes hetero y no hetero heroes
 
@@ -450,7 +441,9 @@ ggplot(gsmHeroesDf,mapping = aes(x="",y=gsmHeroesAmounts, fill=heroesGroups))+
     labs(
     	title="Grafico circular IV",
        subtitle = "Cantidad de heroes heterosexuales y no heterosexuales")+
-    theme(plot.margin = margin(1, 1, 1, 1, "cm"))
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))+
+    guides(fill=guide_legend(title="Orientación sexual"))
+
 
 #Proporcion villanos gsm
 
@@ -466,11 +459,235 @@ print(
 
 
 
-#Personajes mujeres
+#Personajes mujeres y mujeres
 
 womenChars      <- filter(comicsData, gender=="Female" )
 
 womenVillians   <- filter(womenChars, align=="Bad" )
 
+menChars   <- filter(comicsData, gender=="Male")
 
 
+#Grafico de barras
+
+demo <- tribble(
+  ~Grupo,         ~Sexo  ,        ~freq,
+  "Nro. de heroes",       "Hombres",        length(filter(menChars, align=="Good")$name),
+  "Nro. de heroes",       "Mujeres",        length(filter(womenChars,    align=="Good")$name),
+  "Nro. de villanos",     "Hombres",         length(filter(menChars, align=="Bad")$name),
+  "Nro. de villanos",		 "Mujeres",        length(womenVillians$name),
+  "Nro. de apariciones",		 "Hombres",        length(filter(menChars, !is.na(appearances))$name),
+  "Nro. de apariciones",		 "Mujeres",        length(filter(womenChars, !is.na(appearances))$name)
+
+)
+
+ggplot(data = demo) +
+  geom_bar(mapping = aes(x = Grupo, y = freq, fill = Sexo), stat = "identity",position="dodge")+
+  scale_y_continuous(breaks=0:32/2*1000,name="")+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+
+    labs(
+    	title="Grafico de barras I",
+       subtitle = "Cantidad de heroes heterosexuales y no heterosexuales")+
+    theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))+
+    guides(fill=guide_legend(title="Sexo"))
+
+
+#Grafico de caja y bigotes
+gsmAndNoGsmApperancesDf <- filter(gsm, !is.na(appearances) )
+
+ggplot(data = gsmAndNoGsmApperancesDf, mapping = aes(x = gsm, y = appearances,fill=gsm)) + 
+  geom_boxplot()+
+	coord_flip()+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("") +
+    labs(
+    	title="Grafico de caja I",
+       subtitle = "Dispersión de apariciones de personajes no heterosexuales")+
+    theme(plot.margin = margin(0.2, 0.2, 0.2, 0.2, "cm"))+
+    guides(fill=guide_legend(title="Orientación sexual"))
+
+#Medidas para el Grafico de caja y bigotes
+print(unique(gsm$gsm))
+
+#Bisexuales
+bisexualsAppearences = filter(gsm, !is.na(appearances) & gsm=="Bisexual Characters")
+
+bisexualsAppearencesMax = max(bisexualsAppearences$appearances)
+bisexualsAppearencesMin = min(bisexualsAppearences$appearances)
+
+
+profiling_num(bisexualsAppearences)
+
+
+print(bisexualsAppearencesMax)
+print(bisexualsAppearencesMin)
+
+#Homo
+homosexualAppearences = filter(gsm, !is.na(appearances) & gsm=="Homosexual Characters")
+
+homosexualAppearencesMax = max(homosexualAppearences$appearances)
+homosexualAppearencesMin = min(homosexualAppearences$appearances)
+
+
+profiling_num(homosexualAppearences)
+
+print(homosexualAppearencesMax)
+print(homosexualAppearencesMin)
+
+#Fluid
+fluidAppearences = filter(gsm, !is.na(appearances) & gsm=="Genderfluid Characters")
+
+fluidAppearencesMax = max(fluidAppearences$appearances)
+fluidAppearencesMin = min(fluidAppearences$appearances)
+
+print(fluidAppearences$gsm)
+
+profiling_num(fluidAppearences)
+
+print(fluidAppearencesMax)
+print(fluidAppearencesMin)
+
+#Pan
+PansexualAppearences = filter(gsm, !is.na(appearances) & gsm=="Pansexual Characters")
+
+PansexualAppearencesMax = max(PansexualAppearences$appearances)
+PansexualAppearencesMin = min(PansexualAppearences$appearances)
+
+print(PansexualAppearences$gsm)
+
+profiling_num(PansexualAppearences)
+
+print(PansexualAppearencesMax)
+print(PansexualAppearencesMin)
+
+#Pan
+TransgenderAppearences = filter(gsm, !is.na(appearances) & gsm=="Transgender Characters")
+
+print(TransgenderAppearences$name)
+
+profiling_num(TransgenderAppearences)
+
+TransgenderAppearencesMax = max(TransgenderAppearences$appearances)
+TransgenderAppearencesMin = min(TransgenderAppearences$appearances)
+
+print(TransgenderAppearencesMax)
+print(TransgenderAppearencesMin)
+
+#Personajes women en los 40
+
+womenInFortiesDecade <- filter(womenChars, 
+	grepl(paste(fortiesDecade, collapse="|"), 
+	first_appear))
+
+print(
+	paste(
+		length(womenInFortiesDecade$name),
+		" de los personajes mujeres fueron creados en los 40"
+	)
+)
+
+  #Personajes women en los 50
+
+womenInFitiesDecade <- filter(womenChars, 
+	grepl(paste(fitieshDecade, collapse="|"), 
+	first_appear))
+
+print(
+	paste(
+		length(womenInFitiesDecade$name),
+		" de los personajes mujeres fueron creados en los 50"
+	)
+)
+
+#Personajes women en los 60
+
+womenInSixtiesDecade <- filter(womenChars, 
+	grepl(paste(sixtiesDecade, collapse="|"), 
+	first_appear))
+
+print(
+	paste(
+		length(womenInSixtiesDecade$name),
+		" de los personajes mujeres fueron creados en los 60"
+	)
+)
+
+  #Personajes women en los 70
+
+womenInSeventiesDecade <- filter(womenChars, 
+	grepl(paste(seventiesDecade, collapse="|"), 
+	first_appear))
+
+print(
+	paste(
+		length(womenInSeventiesDecade$name),
+		" de los personajes mujeres fueron creados en los 70"
+	)
+)
+
+  #Personajes women en los 80
+
+womenInEightiesDecade <- filter(womenChars, 
+	grepl(paste(eightiesDecade, collapse="|"), 
+	first_appear))
+
+print(
+	paste(
+		length(womenInEightiesDecade$name),
+		" de los personajes mujeres fueron creados en los 80"
+	)
+)
+
+  #Personajes women en los 90
+
+womenInNinetiesDecade <- filter(womenChars, 
+	grepl(paste(ninetiesDecade, collapse="|"), 
+	first_appear))
+
+print(
+	paste(
+		length(womenInNinetiesDecade$name),
+		" de los personajes mujeres fueron creados en los 90"
+	)
+)
+
+  #Personajes women en los 2000
+
+womenIn2milDecade <- filter(womenChars, 
+	grepl(paste(secondMileniumDecade, collapse="|"), 
+	first_appear))
+
+print(
+	paste(
+		length(womenIn2milDecade$name),
+		" de los personajes mujeres fueron creados en la decada del 2010"
+	)
+)
+
+#Grafico de lineas II personajes mujeres a lo largo de las decadas
+
+decadesWomenResults <- c(
+	length(womenInFortiesDecade$name),
+	length(womenInFitiesDecade$name),
+	length(womenInSixtiesDecade$name),
+	length(womenInSeventiesDecade$name),
+	length(womenInEightiesDecade$name),
+	length(womenInNinetiesDecade$name),
+	length(womenIn2milDecade$name)
+)
+
+womenDecadesDf <- data.frame(decades,decadesWomenResults)
+
+ggplot(mapping=aes(decades,decadesWomenResults, group=1,color=decadesWomenResults))+
+	
+	geom_point()+
+	geom_line()+
+	theme_classic()+
+	scale_x_discrete("Decadas") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("Frecuencia") +
+    labs(title="Grafico de lineas II",subtitle = "Frecuencia absoluta de la creacion de personajes mujeres a lo largo del sigo XX y XXI")+
+    theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))+
+    guides(color=guide_legend(title="Frecuencia"))
