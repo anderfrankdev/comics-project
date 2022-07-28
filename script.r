@@ -1,4 +1,4 @@
-library(funModeling)
+#library(funModeling)
 library(dplyr)
 library(ggplot2)
 
@@ -21,7 +21,10 @@ noGsm <- filter(comicsData, is.na(gsm) )
 
 #Numero total de apariciones de los heroes que pertenecen a una minoria sexual
 
-gsmApperances  <- sum(filter(gsm, !is.na(appearances))$appearances)
+gsmApperances  <- sum(
+	filter(gsm, !is.na(appearances))$appearances
+)
+
 print(
 	paste(
 		"Los personajes que pertenecen a las minorias sexuales acumulan ",
@@ -33,7 +36,9 @@ print(
 
 #Numero total de apariciones de los heroes que NO pertenecen a una minoria sexual
 
-noGsmApperances  <- sum(filter(noGsm, !is.na(appearances))$appearances)
+noGsmApperances  <- sum(
+	filter(noGsm, !is.na(appearances))$appearances
+)
 
 print(
 	paste(
@@ -68,27 +73,42 @@ print(paste(
 )
 
 #Grafico de barras I proporcion de personajes gsm 
-count <- c(gsmApperances , noGsmApperances)
-#GenderSex <- c("gsm","heterosexuales")
-#prop <-c(1,1)
-
-demo <- tribble(
-  ~Grupo,         ~freq,
-  "GSM",       gsmApperances,
-  "Heterosexual",       noGsmApperances
+Frecuecia <- c(gsmApperances , noGsmApperances)
+Porcentajes <- c(
+	paste(round(gsmApperances*100/(gsmApperances+noGsmApperances),1),"%"),
+	paste(round(noGsmApperances*100/(gsmApperances+noGsmApperances),1),"%")
 )
 
-ggplot(data = demo) +
-  geom_bar(mapping = aes(x = Grupo, y = freq, fill = Grupo), stat = "identity")+
-  	theme_classic()+
-	scale_x_discrete("Grupo") +     # configuración eje X (etiqueta del eje)
-    scale_y_continuous("Frecuencia absoluta") +
+Grupo <- c("GSM","Heterosexuales")
+#prop <-c(1,1)
+
+#demo <- tribble(
+#  ~Grupo,         ~freq,
+#  "GSM",       gsmApperances,
+#  "Heterosexual",       noGsmApperances
+#)
+
+#ggplot(data = demo) +
+#  geom_bar(mapping = aes(x = Grupo, y = freq, fill = Grupo), stat = "identity")
+
+
+
+gsmProportionDf <- data.frame(Grupo,Frecuecia)
+
+ggplot(gsmProportionDf,mapping = aes(x="",y=Frecuecia, fill=Grupo))+
+  geom_bar(stat = "identity")+
+  coord_polar(theta="y")+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("") +
+    geom_text(aes(label=Porcentajes),
+              position=position_stack(vjust=0.5))+
+    theme_void()+
     labs(
-    	title="Grafico de barras I",
-       subtitle = "Frecuencia absoluta de las apariciones de personajes gsm y no gsm")
-
-#gsmProportionDf <- data.frame(GenderSex,count,prop)
-
+    	title="Grafico circular I",
+       subtitle = "Frecuencia de las apariciones 
+       de personajes heterosexuales y no heterosexuales")+
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))
 
 #Personajes gsm a lo largo de las decadas
 
@@ -105,7 +125,9 @@ c("40",
   "48",
   "49")
 
-gsmInFortiesDecade <- filter(gsm, grepl(paste(fortiesDecade, collapse="|"), first_appear))
+gsmInFortiesDecade <- filter(gsm, 
+	grepl(paste(fortiesDecade, collapse="|"), 
+	first_appear))
 
 print(
 	paste(
@@ -127,7 +149,9 @@ c("50",
   "58",
   "59")
 
-gsmInFitiesDecade <- filter(gsm, grepl(paste(fitieshDecade, collapse="|"), first_appear))
+gsmInFitiesDecade <- filter(gsm, 
+	grepl(paste(fitieshDecade, collapse="|"), 
+	first_appear))
 
 print(
 	paste(
@@ -149,7 +173,9 @@ c("60",
   "68",
   "69")
 
-gsmInSixtiesDecade <- filter(gsm, grepl(paste(sixtiesDecade, collapse="|"), first_appear))
+gsmInSixtiesDecade <- filter(gsm, 
+	grepl(paste(sixtiesDecade, collapse="|"), 
+	first_appear))
 
 print(
 	paste(
@@ -171,7 +197,9 @@ c("70",
   "78",
   "79")
 
-gsmInSeventiesDecade <- filter(gsm, grepl(paste(seventiesDecade, collapse="|"), first_appear))
+gsmInSeventiesDecade <- filter(gsm, 
+	grepl(paste(seventiesDecade, collapse="|"), 
+	first_appear))
 
 print(
 	paste(
@@ -193,7 +221,9 @@ c("80",
   "88",
   "89")
 
-gsmInEightiesDecade <- filter(gsm, grepl(paste(eightiesDecade, collapse="|"), first_appear))
+gsmInEightiesDecade <- filter(gsm, 
+	grepl(paste(eightiesDecade, collapse="|"), 
+	first_appear))
 
 print(
 	paste(
@@ -215,7 +245,9 @@ c("90",
   "98",
   "99")
 
-gsmInNinetiesDecade <- filter(gsm, grepl(paste(ninetiesDecade, collapse="|"), first_appear))
+gsmInNinetiesDecade <- filter(gsm, 
+	grepl(paste(ninetiesDecade, collapse="|"), 
+	first_appear))
 
 print(
 	paste(
@@ -237,7 +269,9 @@ c("00",
   "08",
   "09")
 
-gsmIn2milDecade <- filter(gsm, grepl(paste(secondMileniumDecade, collapse="|"), first_appear))
+gsmIn2milDecade <- filter(gsm, 
+	grepl(paste(secondMileniumDecade, collapse="|"), 
+	first_appear))
 
 print(
 	paste(
@@ -279,9 +313,46 @@ ggplot(mapping=aes(decades,decadesResults, group=1,color=decadesResults))+
     scale_y_continuous("Frecuencia") +
     labs(
     	title="Grafico de linea I",
-       subtitle = "Frecuencia absoluta de la creacion de personajes gsm a lo largo del sigo XX y XXI")
+       subtitle = "Frecuencia 
+       absoluta de la creacion de 
+       personajes gsm a lo largo del sigo XX y XXI")
 
-#Personajes villanos
+#Personajes GSM hombre/mujeres
+
+gsmMen    <- filter(comicsData, !is.na(gsm) & gender=="Male" )
+gsmWomen  <- filter(comicsData, !is.na(gsm) & gender=="Female" )
+
+gsmAmounts <- c(
+	length(gsmMen$name), 
+	length(gsmWomen$name)
+)
+
+groups     <- c("Hombres","Mujeres")
+
+gsmSexPercentages <- c(
+	paste(round(length(gsmMen$name)*100/(length(gsmMen$name)+length(gsmWomen$name)),1),"%"),
+	paste(round(length(gsmWomen$name)*100/(length(gsmMen$name)+length(gsmWomen$name)),1),"%")
+)
+
+gsmSexDf <- data.frame(groups,gsmAmounts)
+
+ggplot(gsmSexDf,mapping = aes(x="",y=gsmAmounts, fill=groups))+
+  geom_bar(stat = "identity")+
+  coord_polar(theta="y")+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("") +
+    geom_text(aes(label=gsmSexPercentages),
+              position=position_stack(vjust=0.5))+
+    theme_void()+
+    scale_fill_manual(values=c("green","orange"))+
+    labs(
+    	title="Grafico circular II",
+       subtitle = "Cantidad de personajes no heterosexuales hombres y mujeres")+
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))
+
+
+#Personajes hetero y no hetero villanos
 
 gsmVillians     <- filter(comicsData, !is.na(gsm) & align=="Bad" )
 
@@ -302,17 +373,97 @@ print(
 	)
 )
 
-#Proporcion villanos gsm
+gsmVillianAmounts <- c(
+	length(gsmVillians$name), 
+	length(noGsmVillians$name)
+)
 
-villiansGsmProportion <- length(noGsmVillians$name)/length(gsmVillians$name)
+villianGroups     <- c("Villanos GSM","Villanos heterosexuales")
+
+gsmVilliansPercentages <- c(
+	paste(round(length(gsmVillians$name)*100/(length(gsmVillians$name)+length(noGsmVillians$name)),1),"%"),
+	paste(round(length(noGsmVillians$name)*100/(length(gsmVillians$name)+length(noGsmVillians$name)),1),"%")
+)
+
+gsmVilliansDf <- data.frame(villianGroups,gsmVillianAmounts)
+
+ggplot(gsmVilliansDf,mapping = aes(x="",y=gsmVillianAmounts, fill=villianGroups))+
+  geom_bar(stat = "identity")+
+  coord_polar(theta="y")+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("") +
+    geom_text(aes(label=gsmVilliansPercentages),
+              position=position_stack(vjust=0.5))+
+    theme_void()+
+    scale_fill_manual(values=c("darkblue","yellow"))+
+    labs(
+    	title="Grafico circular III",
+       subtitle = "Cantidad de villanos heterosexuales y no heterosexuales")+
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))
+
+#Personajes hetero y no hetero heroes
+
+gsmHeroes     <- filter(comicsData, !is.na(gsm) & align=="Good" )
 
 print(
 	paste(
-		"Por cada personaje que pertenece a las minorias sexuales hay ",
-		villiansGsmProportion, 
-		" personajes heterosexuales"
+		length(gsmHeroes$name),
+		" personajes que pertenecen a las minorias sexuales son super Heroes "
 	)
 )
+
+noGsmHeroes     <- filter(comicsData, is.na(gsm) & align=="Good" )
+
+
+print(
+	paste(
+		length(noGsmHeroes$name),
+		" personajes que NO pertenecen a las minorias sexuales son super Heroes"
+	)
+)
+
+gsmHeroesAmounts <- c(
+	length(gsmHeroes$name), 
+	length(noGsmHeroes$name)
+)
+
+heroesGroups     <- c("Heroes no heterosexuales","Heroes heterosexuales")
+
+gsmHeroesPercentages <- c(
+	paste(round(length(gsmHeroes$name)*100/(length(gsmHeroes$name)+length(noGsmHeroes$name)),1),"%"),
+	paste(round(length(noGsmHeroes$name)*100/(length(gsmHeroes$name)+length(noGsmHeroes$name)),1),"%")
+)
+
+gsmHeroesDf <- data.frame(heroesGroups,gsmHeroesAmounts)
+
+ggplot(gsmHeroesDf,mapping = aes(x="",y=gsmHeroesAmounts, fill=heroesGroups))+
+  geom_bar(stat = "identity")+
+  coord_polar(theta="y")+
+  theme_classic()+
+	scale_x_discrete("") +     # configuración eje X (etiqueta del eje)
+    scale_y_continuous("") +
+    geom_text(aes(label=gsmHeroesPercentages),
+              position=position_stack(vjust=0.5))+
+    theme_void()+
+    scale_fill_manual(values=c("lightblue","salmon"))+
+    labs(
+    	title="Grafico circular IV",
+       subtitle = "Cantidad de heroes heterosexuales y no heterosexuales")+
+    theme(plot.margin = margin(1, 1, 1, 1, "cm"))
+
+#Proporcion villanos gsm
+
+heroesGsmProportion <- length(noGsmHeroes$name)/length(gsmHeroes$name)
+
+print(
+	paste(
+		"Por cada heore que pertenece a las minorias sexuales hay ",
+		round(heroesGsmProportion,1), 
+		" villanos heterosexuales"
+	)
+)
+
 
 
 #Personajes mujeres
@@ -320,3 +471,6 @@ print(
 womenChars      <- filter(comicsData, gender=="Female" )
 
 womenVillians   <- filter(womenChars, align=="Bad" )
+
+
+
