@@ -34,6 +34,7 @@ kable(table_1_f,digits=2,caption="Número de apariciones entre personajes person
 ```
 
 La siguiente gráfica muestra que los personajes heterosexuales tienen un mayor número de apariciones abarcando el 97% de las mismas; mientras que los personajes que se encuentran entre las minorías sexuales sólo representan un 3% de las apariciones en las historietas de Marvel y DC.
+
 ```{r , echo=FALSE}
 graphic_data_1 <-read.csv(file = 'graphic_data_1.csv')
 ggplot(graphic_data_1,mapping = aes(x="",y=Frecuecia, fill=Grupo))+
@@ -58,6 +59,7 @@ ggplot(graphic_data_1,mapping = aes(x="",y=Frecuecia, fill=Grupo))+
 ## Inclusión de personajes no heterosexuales a través de las décadas
 
 A continuación se muestra una tabla con la distribución de frecuencias de las primeras apariciones de los personajes catalogados como minorías sexuales y su comportamiento a través de las décadas a partir de 1940.
+
 ```{r , echo=FALSE}
   graphic_data_2 <-read.csv(file = 'graphic_data_2.csv')
   table_2_f <- graphic_data_2 %>%summarise(decades,decadesResults,gsmDecades_hi,gsmDecadesPerc)
@@ -81,6 +83,7 @@ ggplot(data=graphic_data_2,mapping=aes(x=decades,y=decadesResults, group=1,color
     theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))+
     guides(color=guide_legend(title="Frecuencia"))
 ```
+
 En la gráfica se puede apreciar que entre 1940 y 1950 hay una disminución en la creación de estos personajes. Pero a partir de 1950 existe un crecimiento bastante considerable en las primeras apariciones de las minorías sexuales como personajes de los cómics de Marvel y DC.
 
 ***
@@ -139,6 +142,7 @@ ggplot(data = graphic_data_4, mapping = aes(x = gsm, y = appearances,fill=gsm)) 
     guides(fill=guide_legend(title="Orientación sexual"))
    
 ```
+
 La gráfica muestra que los personajes bisexuales tienen un número de apariciones promedio de 186, sin embargo, algunos personajes tienen muchas más apariciones que aquellos que se encuentran en los valores mínimos. Los personajes homosexuales en promedio tienen un número de apariciones de 43, teniendo valores intercuartílicos que van desde las 6,5 apariciones hasta las 48,5 apariciones. Y los personajes transgenero tienen un número de apariciones promedio de 34,5 con un rango bastante corto en comparación con las otras variables. 
 
 ***
